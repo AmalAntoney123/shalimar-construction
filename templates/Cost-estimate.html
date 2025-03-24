@@ -4,143 +4,434 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cost Estimation - Shalimar Builders</title>
+    
+    <!-- font awesome cdn link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
     <style>
-        .cost-estimate-form {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        .cost-estimate-section {
+            padding: 8rem 7% 2rem;
+            background: #f5f5f5;
+            min-height: 100vh;
         }
-        
-        .form-group {
+
+        .cost-estimate-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .input-group {
             margin-bottom: 1.5rem;
         }
-        
-        .form-group label {
+
+        .input-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
         }
-        
-        .form-group input, .form-group select {
+
+        .input-group input,
+        .input-group select {
             width: 100%;
-            padding: 0.5rem;
+            padding: 1rem;
             border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #f39c12;
+            box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+        }
+
+        .features-group {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-item input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        .btn-calculate {
+            grid-column: 1 / -1;
+            background: #f39c12;
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-calculate:hover {
+            background: #e67e22;
+        }
+
+        .result-container {
+            margin-top: 2rem;
+            text-align: center;
+            padding: 2rem;
+            background: #f0f8ff;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-amount {
+            font-size: 2.5rem;
+            color: #2ecc71;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+
+        .form-section {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f39c12;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-section h3 i {
+            margin-right: 0.5rem;
+            color: #f39c12;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .cost-breakdown {
+            display: grid;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .cost-breakdown > div {
+            padding: 1rem;
+            background: #f8f9fa;
             border-radius: 4px;
         }
-        
-        .result {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #f5f5f5;
-            border-radius: 4px;
-            text-align: center;
+
+        .total-cost {
+            background: #f39c12 !important;
+            color: white;
+        }
+
+        .disclaimer {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 1rem;
         }
     </style>
 </head>
 <body>
+    <!-- Header Section -->
     <header class="header">
-        <!-- Add your existing header content -->
+        <div class="header-content">
+            <a href="/" class="logo">
+                <img src="{{ url_for('static', filename='images/logo 3.jpg') }}" alt="Shalimar Builders Logo" class="logo-img">
+                Shalimar<span>Builders</span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="navbar">
+                <a href="/">Home</a>
+                <a href="/#about">About</a>
+                <a href="/#services">Services</a>
+                <a href="/#projects">Gallery</a>
+                <a href="/E-monitor">E-Monitor</a>
+                <a href="/cost-estimate" class="active">Cost Estimate</a>
+                <a href="/#contact">Contact</a>
+            </nav>
+
+            <div class="icons">
+                <div id="menu-btn" class="fas fa-bars"></div>
+            </div>
+        </div>
     </header>
 
+    <!-- Cost Estimate Section -->
     <section class="cost-estimate-section">
         <h1 class="heading">House Cost Estimation</h1>
         
-        <div class="cost-estimate-form">
-            <form id="estimateForm">
-                <div class="form-group">
-                    <label for="plotSize">Plot Size (sq ft)</label>
-                    <input type="number" id="plotSize" required>
-                </div>
+        <div class="cost-estimate-container">
+            <form id="estimateForm" class="form-grid">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-home"></i> Basic Details</h3>
+                    <div class="input-group">
+                        <label for="plotSize">Plot Size (sq ft)</label>
+                        <input type="number" id="plotSize" required min="0" step="1">
+                    </div>
 
-                <div class="form-group">
-                    <label for="floors">Number of Floors</label>
-                    <input type="number" id="floors" min="1" required>
-                </div>
+                    <div class="input-group">
+                        <label for="floors">Number of Floors</label>
+                        <input type="number" id="floors" required min="1" max="10">
+                    </div>
 
-                <div class="form-group">
-                    <label for="bedrooms">Number of Bedrooms</label>
-                    <input type="number" id="bedrooms" min="1" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="construction-quality">Construction Quality</label>
-                    <select id="construction-quality" required>
-                        <option value="standard">Standard</option>
-                        <option value="premium">Premium</option>
-                        <option value="luxury">Luxury</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="additional-features">Additional Features</label>
-                    <div>
-                        <input type="checkbox" id="swimming-pool"> Swimming Pool
-                        <input type="checkbox" id="garden"> Garden
-                        <input type="checkbox" id="solar-system"> Solar System
-                        <input type="checkbox" id="elevator"> Elevator
+                    <div class="input-group">
+                        <label for="construction-quality">Construction Quality</label>
+                        <select id="construction-quality" required>
+                            <option value="">Select Quality</option>
+                            <option value="standard">Standard (₹1,800/sq ft)</option>
+                            <option value="premium">Premium (₹2,500/sq ft)</option>
+                            <option value="luxury">Luxury (₹3,500/sq ft)</option>
+                        </select>
                     </div>
                 </div>
 
-                <button type="submit" class="btn">Calculate Estimate</button>
+                <!-- Room Configuration -->
+                <div class="form-section">
+                    <h3><i class="fas fa-bed"></i> Room Configuration</h3>
+                    <div class="input-group">
+                        <label for="bedrooms">Bedrooms</label>
+                        <input type="number" id="bedrooms" required min="1" max="10">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="bathrooms">Bathrooms</label>
+                        <input type="number" id="bathrooms" required min="1" max="10">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="kitchen-type">Kitchen Type</label>
+                        <select id="kitchen-type" required>
+                            <option value="basic">Basic Kitchen</option>
+                            <option value="modular">Modular Kitchen</option>
+                            <option value="luxury">Luxury Kitchen with Island</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Living Spaces -->
+                <div class="form-section">
+                    <h3><i class="fas fa-couch"></i> Living Spaces</h3>
+                    <div class="checkbox-group">
+                        <div class="feature-item">
+                            <input type="checkbox" id="living-room">
+                            <label for="living-room">Living Room</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="dining-room">
+                            <label for="dining-room">Dining Room</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="family-room">
+                            <label for="family-room">Family Room</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="study-room">
+                            <label for="study-room">Study Room</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="puja-room">
+                            <label for="puja-room">Puja Room</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outdoor Spaces -->
+                <div class="form-section">
+                    <h3><i class="fas fa-tree"></i> Outdoor Spaces</h3>
+                    <div class="checkbox-group">
+                        <div class="feature-item">
+                            <input type="checkbox" id="balcony">
+                            <label for="balcony">Balcony</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="terrace">
+                            <label for="terrace">Terrace</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="garden">
+                            <label for="garden">Garden</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="parking">
+                            <label for="parking">Car Parking</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Amenities -->
+                <div class="form-section">
+                    <h3><i class="fas fa-plus-circle"></i> Additional Amenities</h3>
+                    <div class="checkbox-group">
+                        <div class="feature-item">
+                            <input type="checkbox" id="servant-room">
+                            <label for="servant-room">Servant Room</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="elevator">
+                            <label for="elevator">Elevator</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="solar-system">
+                            <label for="solar-system">Solar System</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="rainwater">
+                            <label for="rainwater">Rainwater Harvesting</label>
+                        </div>
+                        <div class="feature-item">
+                            <input type="checkbox" id="security">
+                            <label for="security">Security System</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-calculate">Calculate Estimate</button>
             </form>
 
-            <div class="result" id="estimateResult" style="display: none;">
-                <h3>Estimated Cost</h3>
-                <p id="estimatedAmount">₹0</p>
+            <div id="estimateResult" class="result-container">
+                <h3>Estimated Cost Breakdown</h3>
+                <div class="cost-breakdown">
+                    <div class="basic-cost">
+                        <h4>Basic Construction Cost</h4>
+                        <p id="basicCost">₹0</p>
+                    </div>
+                    <div class="amenities-cost">
+                        <h4>Amenities Cost</h4>
+                        <p id="amenitiesCost">₹0</p>
+                    </div>
+                    <div class="total-cost">
+                        <h4>Total Estimated Cost</h4>
+                        <p id="totalCost" class="result-amount">₹0</p>
+                    </div>
+                </div>
+                <p class="disclaimer">This is an approximate estimation. Contact us for a detailed quote.</p>
             </div>
         </div>
     </section>
 
+    <!-- Footer Section -->
+    <section class="footer">
+        <div class="links">
+            <a class="btn" href="/">Home</a>
+            <a class="btn" href="/#about">About</a>
+            <a class="btn" href="/#services">Services</a>
+            <a class="btn" href="/#projects">Gallery</a>
+            <a class="btn" href="/E-monitor">E-Monitor</a>
+            <a class="btn" href="/cost-estimate">Cost Estimate</a>
+            <a class="btn" href="/#contact">Contact</a>
+        </div>
+
+        <div class="credit">
+            created by <span>BuildHub</span> | all rights reserved!
+        </div>
+    </section>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
         document.getElementById('estimateForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get form values
+            // Basic costs
             const plotSize = Number(document.getElementById('plotSize').value);
             const floors = Number(document.getElementById('floors').value);
-            const bedrooms = Number(document.getElementById('bedrooms').value);
             const quality = document.getElementById('construction-quality').value;
             
-            // Additional features
-            const hasPool = document.getElementById('swimming-pool').checked;
-            const hasGarden = document.getElementById('garden').checked;
-            const hasSolar = document.getElementById('solar-system').checked;
-            const hasElevator = document.getElementById('elevator').checked;
+            // Room configuration
+            const bedrooms = Number(document.getElementById('bedrooms').value);
+            const bathrooms = Number(document.getElementById('bathrooms').value);
+            const kitchenType = document.getElementById('kitchen-type').value;
             
-            // Base cost per sq ft based on quality
+            // Calculate base cost
             let baseCost;
             switch(quality) {
-                case 'standard':
-                    baseCost = 1800;
-                    break;
-                case 'premium':
-                    baseCost = 2500;
-                    break;
-                case 'luxury':
-                    baseCost = 3500;
-                    break;
+                case 'standard': baseCost = 1800; break;
+                case 'premium': baseCost = 2500; break;
+                case 'luxury': baseCost = 3500; break;
+                default: alert('Please select construction quality'); return;
             }
             
-            // Calculate basic cost
-            let totalCost = plotSize * baseCost * floors;
+            // Basic construction cost
+            let basicCost = plotSize * baseCost * floors;
             
-            // Add costs for additional features
-            if(hasPool) totalCost += 500000;
-            if(hasGarden) totalCost += 200000;
-            if(hasSolar) totalCost += 300000;
-            if(hasElevator) totalCost += 800000;
+            // Additional costs
+            let amenitiesCost = 0;
             
-            // Add bedroom premium
-            totalCost += (bedrooms * 100000);
+            // Kitchen costs
+            switch(kitchenType) {
+                case 'modular': amenitiesCost += 500000; break;
+                case 'luxury': amenitiesCost += 1000000; break;
+            }
             
-            // Display result
+            // Room costs
+            amenitiesCost += (bedrooms * 200000); // Per bedroom
+            amenitiesCost += (bathrooms * 150000); // Per bathroom
+            
+            // Living spaces
+            if(document.getElementById('living-room').checked) amenitiesCost += 300000;
+            if(document.getElementById('dining-room').checked) amenitiesCost += 200000;
+            if(document.getElementById('family-room').checked) amenitiesCost += 250000;
+            if(document.getElementById('study-room').checked) amenitiesCost += 150000;
+            if(document.getElementById('puja-room').checked) amenitiesCost += 100000;
+            
+            // Outdoor spaces
+            if(document.getElementById('balcony').checked) amenitiesCost += 150000;
+            if(document.getElementById('terrace').checked) amenitiesCost += 200000;
+            if(document.getElementById('garden').checked) amenitiesCost += 300000;
+            if(document.getElementById('parking').checked) amenitiesCost += 250000;
+            
+            // Additional amenities
+            if(document.getElementById('servant-room').checked) amenitiesCost += 200000;
+            if(document.getElementById('elevator').checked) amenitiesCost += 800000;
+            if(document.getElementById('solar-system').checked) amenitiesCost += 300000;
+            if(document.getElementById('rainwater').checked) amenitiesCost += 150000;
+            if(document.getElementById('security').checked) amenitiesCost += 200000;
+            
+            // Display results
             document.getElementById('estimateResult').style.display = 'block';
-            document.getElementById('estimatedAmount').textContent = 
-                '₹' + totalCost.toLocaleString('en-IN');
+            document.getElementById('basicCost').textContent = '₹' + basicCost.toLocaleString('en-IN');
+            document.getElementById('amenitiesCost').textContent = '₹' + amenitiesCost.toLocaleString('en-IN');
+            document.getElementById('totalCost').textContent = '₹' + (basicCost + amenitiesCost).toLocaleString('en-IN');
         });
     </script>
 </body>
