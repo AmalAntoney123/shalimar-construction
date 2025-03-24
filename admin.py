@@ -47,55 +47,72 @@ def admin_panel():
 @admin_required
 def manage_projects():
     projects = list(mongo.db.projects.find())
-    return render_template('admin/manage_projects.html', projects=projects)
+    clients = list(mongo.db.users.find({'role': 'client'}))
+    return render_template('admin/manage_projects.html', projects=projects, clients=clients)
 
 @admin_bp.route('/projects/add', methods=['POST'])
 @admin_required
 def add_project():
     if request.method == 'POST':
-        # Generate a random password for the client
-        temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-        
-        # Create client account
-        client_data = {
-            'email': request.form.get('client_email'),
-            'name': request.form.get('client_name'),
-            'password': bcrypt.hashpw(temp_password.encode('utf-8'), bcrypt.gensalt()),
-            'role': 'client',
-            'phone': request.form.get('client_phone'),
-            'address': request.form.get('client_address')
-        }
-        
-        # Check if client already exists
-        existing_client = mongo.db.users.find_one({'email': client_data['email']})
-        if not existing_client:
-            client_id = mongo.db.users.insert_one(client_data).inserted_id
-        else:
-            client_id = existing_client['_id']
+        client_type = request.form.get('clientType')
+        client_id = None
+        client_data = None
 
-        # Create project with additional fields for images and logs
+        if client_type == 'existing':
+            # Use existing client
+            client_id = ObjectId(request.form.get('existing_client_id'))
+            client = mongo.db.users.find_one({'_id': client_id})
+            if not client:
+                flash('Selected client not found', 'error')
+                return redirect(url_for('admin.manage_projects'))
+            
+            client_data = {
+                'client_id': client_id,
+                'client_name': client['name'],
+                'client_email': client['email'],
+                'client_phone': client.get('phone', ''),
+                'client_address': client.get('address', '')
+            }
+        else:
+            # Create new client
+            temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+            
+            client_data = {
+                'email': request.form.get('client_email'),
+                'name': request.form.get('client_name'),
+                'password': bcrypt.hashpw(temp_password.encode('utf-8'), bcrypt.gensalt()),
+                'role': 'client',
+                'phone': request.form.get('client_phone'),
+                'address': request.form.get('client_address')
+            }
+            
+            # Check if client already exists
+            existing_client = mongo.db.users.find_one({'email': client_data['email']})
+            if existing_client:
+                flash('A client with this email already exists', 'error')
+                return redirect(url_for('admin.manage_projects'))
+                
+            client_id = mongo.db.users.insert_one(client_data).inserted_id
+            flash(f'New client account created with temporary password: {temp_password}')
+
+        # Create project
         project = {
             'name': request.form.get('name'),
-            'status': 'Not Started',  # Default status
+            'status': 'Not Started',
             'location': request.form.get('location'),
             'description': request.form.get('description'),
-            'progress_images': [],  # Initialize empty list for images
-            'construction_logs': [],  # Initialize empty list for logs
+            'progress_images': [],
+            'construction_logs': [],
             'created_date': datetime.now(),
             'client_id': client_id,
-            'client_name': request.form.get('client_name'),
-            'client_email': request.form.get('client_email'),
-            'client_phone': request.form.get('client_phone'),
-            'client_address': request.form.get('client_address')
+            'client_name': client_data['client_name'],
+            'client_email': client_data['client_email'],
+            'client_phone': client_data['client_phone'],
+            'client_address': client_data['client_address']
         }
         
         project_id = mongo.db.projects.insert_one(project).inserted_id
-        
-        if not existing_client:
-            flash(f'Project created successfully. New client account created with temporary password: {temp_password}')
-        else:
-            flash('Project created successfully. Client account already exists.')
-            
+        flash('Project created successfully')
         return redirect(url_for('admin.project_details', project_id=project_id))
     
     return redirect(url_for('admin.manage_projects'))

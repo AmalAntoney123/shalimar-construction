@@ -3,80 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building Cost Estimator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Cost Estimation - Shalimar Builders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .cost-estimate-form {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .result {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-
-    <!-- Header Section -->
     <header class="header">
-        <div class="header-content">
-            <a href="{{ url_for('home') }}" class="logo">
-                <img src="{{ url_for('static', filename='images/logo 3.jpg') }}" alt="Shalimar Builders Logo" class="logo-img">
-                Shalimar<span>Builders</span>
-            </a>
-        </div>
+        <!-- Add your existing header content -->
     </header>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('home') }}#about">About</a>
-        <a href="{{ url_for('home') }}#services">Services</a>
-        <a href="{{ url_for('home') }}#projects">Gallery</a>
-        <a id="projectTrackingBtn" href="{{ url_for('e_monitor') }}">E-Monitor</a>
-        <a href="{{ url_for('cost_estimate') }}">Cost Estimate</a>
-        <a href="{{ url_for('home') }}#contact">Contact</a>
-    </nav>
+    <section class="cost-estimate-section">
+        <h1 class="heading">House Cost Estimation</h1>
+        
+        <div class="cost-estimate-form">
+            <form id="estimateForm">
+                <div class="form-group">
+                    <label for="plotSize">Plot Size (sq ft)</label>
+                    <input type="number" id="plotSize" required>
+                </div>
 
-    <!-- Video Background -->
-    <div class="video-background">
-        <video autoplay loop muted>
-            <source src="{{ url_for('static', filename='images/coverr-carpenter-sawing-wood-6348-1080p.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
+                <div class="form-group">
+                    <label for="floors">Number of Floors</label>
+                    <input type="number" id="floors" min="1" required>
+                </div>
 
-    <!-- Description Section -->
-    <section class="description">
-        <h1>Estimate Your Building Cost with Ease</h1>
-        <p>
-            Get an approximate cost estimation for your dream project. Simply enter the total area, 
-            number of floors, and construction type, and we will calculate an estimated cost based on standard industry rates.
-        </p>
-        <p>
-            This estimator provides a rough estimate and does not include additional costs such as permits, interior design, or landscaping. 
-            For a more detailed estimate, please contact our experts.
-        </p>
-    </section>
+                <div class="form-group">
+                    <label for="bedrooms">Number of Bedrooms</label>
+                    <input type="number" id="bedrooms" min="1" required>
+                </div>
 
-    <!-- Home Section -->
-    <section class="home">
-        <div class="home-content">
-            <div class="form-container">
-                <h3>Estimate Your Building Cost</h3>
-                <form id="costForm">
-                    <label for="area">Total Area (sq. ft.):</label>
-                    <input type="number" id="area" required>
-
-                    <label for="floors">Number of Floors:</label>
-                    <input type="number" id="floors" required>
-
-                    <label for="constructionType">Type of Construction:</label>
-                    <select id="constructionType">
+                <div class="form-group">
+                    <label for="construction-quality">Construction Quality</label>
+                    <select id="construction-quality" required>
                         <option value="standard">Standard</option>
                         <option value="premium">Premium</option>
                         <option value="luxury">Luxury</option>
                     </select>
+                </div>
 
-                    <button type="button" class="btn" onclick="calculateCost()">Estimate Cost</button>
-                </form>
+                <div class="form-group">
+                    <label for="additional-features">Additional Features</label>
+                    <div>
+                        <input type="checkbox" id="swimming-pool"> Swimming Pool
+                        <input type="checkbox" id="garden"> Garden
+                        <input type="checkbox" id="solar-system"> Solar System
+                        <input type="checkbox" id="elevator"> Elevator
+                    </div>
+                </div>
 
-                <h3>Estimated Cost: <span id="costOutput">₹0</span></h3>
+                <button type="submit" class="btn">Calculate Estimate</button>
+            </form>
+
+            <div class="result" id="estimateResult" style="display: none;">
+                <h3>Estimated Cost</h3>
+                <p id="estimatedAmount">₹0</p>
             </div>
         </div>
     </section>
 
-    <script src="{{ url_for('static', filename='js/script1.js') }}" defer></script>
+    <script>
+        document.getElementById('estimateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const plotSize = Number(document.getElementById('plotSize').value);
+            const floors = Number(document.getElementById('floors').value);
+            const bedrooms = Number(document.getElementById('bedrooms').value);
+            const quality = document.getElementById('construction-quality').value;
+            
+            // Additional features
+            const hasPool = document.getElementById('swimming-pool').checked;
+            const hasGarden = document.getElementById('garden').checked;
+            const hasSolar = document.getElementById('solar-system').checked;
+            const hasElevator = document.getElementById('elevator').checked;
+            
+            // Base cost per sq ft based on quality
+            let baseCost;
+            switch(quality) {
+                case 'standard':
+                    baseCost = 1800;
+                    break;
+                case 'premium':
+                    baseCost = 2500;
+                    break;
+                case 'luxury':
+                    baseCost = 3500;
+                    break;
+            }
+            
+            // Calculate basic cost
+            let totalCost = plotSize * baseCost * floors;
+            
+            // Add costs for additional features
+            if(hasPool) totalCost += 500000;
+            if(hasGarden) totalCost += 200000;
+            if(hasSolar) totalCost += 300000;
+            if(hasElevator) totalCost += 800000;
+            
+            // Add bedroom premium
+            totalCost += (bedrooms * 100000);
+            
+            // Display result
+            document.getElementById('estimateResult').style.display = 'block';
+            document.getElementById('estimatedAmount').textContent = 
+                '₹' + totalCost.toLocaleString('en-IN');
+        });
+    </script>
 </body>
-</html>
+</html> 

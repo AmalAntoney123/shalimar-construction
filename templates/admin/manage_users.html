@@ -57,27 +57,41 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Email</th>
                                 <th>Name</th>
+                                <th>Email</th>
                                 <th>Role</th>
-                                <th>Join Date</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for user in users %}
                             <tr>
-                                <td>{{ user.get('email', 'N/A') }}</td>
                                 <td>{{ user.get('name', 'N/A') }}</td>
-                                <td><span class="badge bg-info">{{ user.get('role', 'User') }}</span></td>
-                                <td>{{ user.get('join_date', 'N/A') }}</td>
+                                <td>{{ user.get('email', 'N/A') }}</td>
+                                <td>{{ user.get('role', 'N/A') }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">
-                                        <i class="fas fa-edit text-black"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ user.id }}">
-                                        <i class="fas fa-trash text-black"></i>
-                                    </button>
+                                    <span class="badge {% if user.get('is_disabled', False) %}bg-danger{% else %}bg-success{% endif %}">
+                                        {{ 'Disabled' if user.get('is_disabled', False) else 'Active' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <form action="{{ url_for('auth.toggle_user_status', user_id=user._id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm {% if user.get('is_disabled', False) %}btn-success{% else %}btn-danger{% endif %} me-2">
+                                                {% if user.get('is_disabled', False) %}
+                                                    <i class="fas fa-user-check"></i> Enable
+                                                {% else %}
+                                                    <i class="fas fa-user-slash"></i> Disable
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-sm btn-warning" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#resetPasswordModal{{ user._id }}">
+                                            <i class="fas fa-key"></i> Reset Password
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -127,8 +141,136 @@
         </div>
     </div>
 
+    <!-- Add Reset Password Modal for each user -->
+    {% for user in users %}
+    <div class="modal fade" id="resetPasswordModal{{ user._id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to reset the password for <strong>{{ user.get('name', 'N/A') }}</strong>?</p>
+                    <p class="text-muted"><small>A new random password will be generated and displayed to you.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{{ url_for('auth.reset_user_password', user_id=user._id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-key me-1"></i> Reset Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <style>
+        /* Button Styles */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Success Button */
+        .btn-success {
+            background-color: #10b981 !important;
+            border: none;
+            color: white !important;
+        }
+
+        .btn-success:hover {
+            background-color: #059669 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Danger Button */
+        .btn-danger {
+            background-color: #ef4444 !important;
+            border: none;
+            color: white !important;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .bg-success {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+
+        .bg-danger {
+            background-color: #ef4444 !important;
+            color: white !important;
+        }
+
+        /* Icon in Button */
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Warning Button */
+        .btn-warning {
+            background-color: #f59e0b !important;
+            border: none;
+            color: white !important;
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Button Group Spacing */
+        .btn-group .btn {
+            margin-right: 0.5rem;
+        }
+
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.25rem;
+        }
+    </style>
 </body>
 </html> 

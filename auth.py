@@ -3,6 +3,8 @@ from flask_pymongo import PyMongo
 from functools import wraps
 from bson.objectid import ObjectId
 import bcrypt
+import random
+import string
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -37,6 +39,11 @@ def login():
     user = mongo.db.users.find_one({'email': email})
     
     if user:
+        # Check if user is disabled
+        if user.get('is_disabled', False):
+            flash('Your account has been disabled. Please contact the administrator.')
+            return redirect(url_for('home'))
+            
         # Make sure password is stored as bytes in the database
         stored_password = user['password']
         if isinstance(stored_password, str):
@@ -76,6 +83,71 @@ def client_dashboard():
     client = mongo.db.users.find_one({'_id': client_id})
     projects = list(mongo.db.projects.find({'client_email': client['email']}))
     return render_template('client/dashboard.html', projects=projects, client=client)
+
+# Add this new route for toggling user status
+@auth_bp.route('/users/toggle-status/<user_id>', methods=['POST'])
+@admin_required
+def toggle_user_status(user_id):
+    try:
+        user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+        if user:
+            # Don't allow disabling admin users
+            if user.get('role') == 'admin':
+                flash('Cannot disable admin users', 'error')
+                return redirect(url_for('admin.manage_users'))
+            
+            # Toggle the is_disabled status
+            current_status = user.get('is_disabled', False)
+            new_status = not current_status
+            
+            mongo.db.users.update_one(
+                {'_id': ObjectId(user_id)},
+                {'$set': {'is_disabled': new_status}}
+            )
+            
+            flash(f"User {'disabled' if new_status else 'enabled'} successfully", 'success')
+        else:
+            flash('User not found', 'error')
+            
+    except Exception as e:
+        flash(f'Error updating user status: {str(e)}', 'error')
+        
+    return redirect(url_for('admin.manage_users'))
+
+# Add this new route for resetting user password
+@auth_bp.route('/users/reset-password/<user_id>', methods=['POST'])
+@admin_required
+def reset_user_password(user_id):
+    try:
+        user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+        if user:
+            # Don't allow resetting admin passwords through this route
+            if user.get('role') == 'admin':
+                flash('Cannot reset admin passwords through this interface', 'error')
+                return redirect(url_for('admin.manage_users'))
+            
+            # Generate a new random password
+            new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+            
+            # Hash the new password
+            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+            
+            # Update the user's password in the database
+            mongo.db.users.update_one(
+                {'_id': ObjectId(user_id)},
+                {'$set': {'password': hashed_password}}
+            )
+            
+            # Show the new password in a flash message
+            flash(f'Password reset successful. New password for {user["email"]}: {new_password}', 'success')
+            
+        else:
+            flash('User not found', 'error')
+            
+    except Exception as e:
+        flash(f'Error resetting password: {str(e)}', 'error')
+        
+    return redirect(url_for('admin.manage_users'))
 
 # Initialize the MongoDB instance
 def init_auth(app):

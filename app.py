@@ -24,5 +24,9 @@ app.register_blueprint(admin_bp)
 def home():
     return render_template('index.html')
 
+@app.route('/cost-estimate')
+def cost_estimate():
+    return render_template('cost-estimate.html')
+
 if __name__ == "__main__":
     app.run(debug=True) 
