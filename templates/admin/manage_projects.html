@@ -9,6 +9,130 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --border: #e2e8f0;
+            --info: #0ea5e9;
+        }
+
+        /* Button Base Styles */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            background-color: var(--primary) !important;
+            border: none;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Info Button */
+        .btn-outline-info {
+            color: var(--info) !important;
+            border: 1px solid var(--info);
+            background-color: transparent;
+        }
+
+        .btn-outline-info:hover {
+            background-color: var(--info);
+            color: white !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        .btn-outline-info:hover i {
+            color: white !important;
+        }
+
+        /* Danger Button */
+        .btn-outline-danger {
+            color: var(--danger) !important;
+            border: 1px solid var(--danger);
+            background-color: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--danger);
+            color: white !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-outline-danger:hover i {
+            color: white !important;
+        }
+
+        /* Light Button */
+        .btn-outline-light {
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background-color: transparent;
+        }
+
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--dark) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Secondary Button */
+        .btn-secondary {
+            background-color: var(--secondary) !important;
+            border: none;
+            color: white !important;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
+        }
+
+        /* Small Button Adjustments */
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Icon in Button */
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Remove any text-black classes effect */
+        .text-black {
+            color: inherit !important;
+        }
+
+        /* Danger Button in Modal */
+        .btn-danger {
+            background-color: var(--danger) !important;
+            border: none;
+            color: white !important;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
         /* Modal Styles */
         .modal-content {
             border: none;
@@ -24,23 +148,6 @@
         .modal-footer {
             border-top: 1px solid var(--border);
             padding: 1.25rem;
-        }
-
-        /* Delete Button Styles */
-        .btn-danger {
-            background-color: var(--danger);
-            border: none;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #dc2626;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-        }
-
-        .btn-outline-danger:hover i {
-            color: white !important;
         }
     </style>
 </head>

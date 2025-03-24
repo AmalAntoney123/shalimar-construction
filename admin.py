@@ -298,4 +298,45 @@ def add_construction_log(project_id):
     flash('Construction log entry added successfully')
     return redirect(url_for('admin.project_details', project_id=project_id))
 
+@admin_bp.route('/projects/delete/<project_id>', methods=['POST'])
+@admin_required
+def delete_project(project_id):
+    try:
+        # Find the project first to get associated images
+        project = mongo.db.projects.find_one({'_id': ObjectId(project_id)})
+        
+        if project:
+            # Delete associated images from filesystem
+            if 'progress_images' in project:
+                for image in project['progress_images']:
+                    if 'filename' in image:
+                        file_path = os.path.join(UPLOAD_FOLDER, image['filename'])
+                        if os.path.exists(file_path):
+                            os.remove(file_path)
+            
+            # Delete images from status updates
+            if 'status_updates' in project:
+                for update in project['status_updates']:
+                    if 'images' in update:
+                        for image in update['images']:
+                            if 'filename' in image:
+                                file_path = os.path.join(UPLOAD_FOLDER, image['filename'])
+                                if os.path.exists(file_path):
+                                    os.remove(file_path)
+            
+            # Delete the project from database
+            result = mongo.db.projects.delete_one({'_id': ObjectId(project_id)})
+            
+            if result.deleted_count > 0:
+                flash('Project deleted successfully', 'success')
+            else:
+                flash('Project not found', 'error')
+        else:
+            flash('Project not found', 'error')
+            
+    except Exception as e:
+        flash(f'Error deleting project: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.manage_projects'))
+
 # Add other admin routes as needed 
