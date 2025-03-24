@@ -12,7 +12,7 @@
             --secondary: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
-            --danger: #ef4444;
+            --danger: #ef4444;                                                                                                                                                                      
             --light: #f8fafc;
             --dark: #0f172a;
             --border: #e2e8f0;
@@ -283,6 +283,22 @@
         .status-mechanical { background-color: #fae8ff; color: #86198f; }
         .status-finishing { background-color: #ede9fe; color: #5b21b6; }
         .status-other { background-color: #f3f4f6; color: #374151; }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .alert-info {
+            background-color: #eff6ff;
+            color: #1e40af;
+        }
+        
+        .alert i {
+            color: #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -309,6 +325,16 @@
             </div>
         </div>
 
+        {% if not projects %}
+        <!-- No Projects Banner -->
+        <div class="alert alert-info d-flex align-items-center p-4 mb-4" role="alert">
+            <i class="fas fa-info-circle fs-4 me-3"></i>
+            <div>
+                <h4 class="alert-heading mb-1">No Projects Available</h4>
+                <p class="mb-0">Please wait while your project details are being updated. Check back later for updates on your construction progress.</p>
+            </div>
+        </div>
+        {% else %}
         <!-- Update the Recent Projects table section -->
         <table class="table table-hover">
             <thead>
@@ -323,10 +349,16 @@
                 <tr>
                     <td>{{ project.get('name', 'N/A') }}</td>
                     <td>
-                        {% set latest_update = project.status_updates|sort(attribute='update_date')|last %}
-                        <span class="status-pill status-{{ latest_update.phase|lower|replace(' ', '-') }}">
-                            {{ latest_update.phase|title }}
-                        </span>
+                        {% if project.get('status_updates', []) %}
+                            {% set latest_update = project.get('status_updates', [])|sort(attribute='update_date')|last %}
+                            <span class="status-pill status-{{ latest_update.get('phase', '')|lower|replace(' ', '-') }}">
+                                {{ latest_update.get('phase', 'Not Started')|title }}
+                            </span>
+                        {% else %}
+                            <span class="status-pill status-not-started">
+                                Not Started
+                            </span>
+                        {% endif %}
                     </td>
                     <td>
                         <a href="{{ url_for('admin.manage_projects') }}" class="btn btn-sm btn-outline-primary">View</a>
@@ -341,14 +373,20 @@
         <div class="summary-section mb-4">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h3>{{ project.name }}</h3>
-                    <p class="text-secondary mb-0">{{ project.location }}</p>
+                    <h3>{{ project.get('name', 'N/A') }}</h3>
+                    <p class="text-secondary mb-0">{{ project.get('location', 'N/A') }}</p>
                 </div>
                 <div class="col-md-6 text-end">
-                    {% set latest_update = project.status_updates|sort(attribute='update_date')|last %}
-                    <span class="status-pill status-{{ latest_update.phase|lower|replace(' ', '-') }}">
-                        {{ latest_update.phase|title }}
-                    </span>
+                    {% if project.get('status_updates', []) %}
+                        {% set latest_update = project.get('status_updates', [])|sort(attribute='update_date')|last %}
+                        <span class="status-pill status-{{ latest_update.get('phase', '')|lower|replace(' ', '-') }}">
+                            {{ latest_update.get('phase', 'Not Started')|title }}
+                        </span>
+                    {% else %}
+                        <span class="status-pill status-not-started">
+                            Not Started
+                        </span>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -361,19 +399,19 @@
                     <!-- Project Stats -->
                     <div class="col-md-4">
                         <div class="summary-stat">
-                            <h3>{{ "{:,.2f}".format(project.total_cost|default(0)) }}</h3>
+                            <h3>{{ "{:,.2f}".format(project.get('total_cost', 0)) }}</h3>
                             <p>Total Cost (₹)</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="summary-stat">
-                            <h3>{{ project.status_updates|length }}</h3>
+                            <h3>{{ project.get('status_updates', [])|length }}</h3>
                             <p>Updates</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="summary-stat">
-                            <h3>{{ project.created_date.strftime('%b %d, %Y') }}</h3>
+                            <h3>{{ project.get('created_date').strftime('%b %d, %Y') if project.get('created_date') else 'N/A' }}</h3>
                             <p>Start Date</p>
                         </div>
                     </div>
@@ -388,13 +426,17 @@
                         <div class="progress-item">
                             <div class="d-flex justify-content-between mb-1">
                                 <span>Construction Progress</span>
-                                {% set latest_update = project.status_updates|sort(attribute='update_date')|last %}
-                                <span>{{ latest_update.completion_percentage|default(0)|round|int }}%</span>
+                                {% if project.get('status_updates', []) %}
+                                    {% set latest_update = project.get('status_updates', [])|sort(attribute='update_date')|last %}
+                                    <span>{{ latest_update.get('completion_percentage', 0)|round|int }}%</span>
+                                {% else %}
+                                    <span>0%</span>
+                                {% endif %}
                             </div>
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar" 
-                                     style="width: {{ latest_update.completion_percentage|default(0)|round|int }}%"
-                                     aria-valuenow="{{ latest_update.completion_percentage|default(0)|round|int }}"
+                                     style="width: {% if project.get('status_updates', []) %}{{ latest_update.get('completion_percentage', 0)|round|int }}{% else %}0{% endif %}%"
+                                     aria-valuenow="{% if project.get('status_updates', []) %}{{ latest_update.get('completion_percentage', 0)|round|int }}{% else %}0{% endif %}"
                                      aria-valuemin="0" 
                                      aria-valuemax="100">
                                 </div>
@@ -405,7 +447,7 @@
                         {% set phases = ['planning', 'foundation', 'framing', 'mechanical', 'finishing'] %}
                         {% set completed_phases = namespace(count=0) %}
                         {% for phase in phases %}
-                            {% set phase_updates = project.status_updates|selectattr('phase', 'equalto', phase)|list %}
+                            {% set phase_updates = project.get('status_updates', [])|selectattr('phase', 'equalto', phase)|list %}
                             {% if phase_updates and phase_updates|selectattr('status', 'equalto', 'Completed')|list %}
                                 {% set completed_phases.count = completed_phases.count + 1 %}
                             {% endif %}
@@ -446,16 +488,16 @@
                     </div>
                     <div class="card-body">
                         <div class="image-gallery">
-                            {% for update in project.status_updates[-3:]|reverse %}
-                                {% if update.images %}
-                                    {% for image in update.images %}
-                                    <div class="gallery-item" onclick="showImageModal('{{ url_for('static', filename='uploads/' + image.filename) }}', '{{ update.phase }}', '{{ update.update_date.strftime('%B %d, %Y') }}')">
-                                        <img src="{{ url_for('static', filename='uploads/' + image.filename) }}"
+                            {% for update in project.get('status_updates', [])[-3:]|reverse %}
+                                {% if update.get('images', []) %}
+                                    {% for image in update.get('images', []) %}
+                                    <div class="gallery-item" onclick="showImageModal('{{ url_for('static', filename='uploads/' + image.get('filename', '')) }}', '{{ update.get('phase', '') }}', '{{ update.get('update_date').strftime('%B %d, %Y') if update.get('update_date') else 'N/A' }}')">
+                                        <img src="{{ url_for('static', filename='uploads/' + image.get('filename', '')) }}"
                                              class="gallery-image"
                                              alt="Progress Image">
                                         <div class="gallery-overlay">
-                                            <div>{{ update.phase|title }}</div>
-                                            <small>{{ update.update_date.strftime('%B %d, %Y') }}</small>
+                                            <div>{{ update.get('phase', '')|title }}</div>
+                                            <small>{{ update.get('update_date').strftime('%B %d, %Y') if update.get('update_date') else 'N/A' }}</small>
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -469,43 +511,43 @@
             <!-- Timeline Tab -->
             <div class="tab-pane fade" id="timeline">
                 <div class="timeline">
-                    {% for update in project.status_updates|sort(attribute='update_date', reverse=true) %}
+                    {% for update in project.get('status_updates', [])|sort(attribute='update_date', reverse=true) %}
                     <div class="timeline-item">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="timeline-date">
                                 <i class="far fa-calendar-alt me-2"></i>
-                                {{ update.update_date.strftime('%B %d, %Y') }}
+                                {{ update.get('update_date').strftime('%B %d, %Y') if update.get('update_date') else 'N/A' }}
                             </div>
-                            <span class="status-pill status-{{ update.status|lower|replace(' ', '-') }}">
-                                {{ update.phase|title }}
+                            <span class="status-pill status-{{ update.get('status', 'not-started')|lower|replace(' ', '-') }}">
+                                {{ update.get('phase', 'Not Started')|title }}
                             </span>
                         </div>
                         
                         <div class="mt-3">
-                            <p>{{ update.notes if update.notes else 'No notes provided' }}</p>
+                            <p>{{ update.get('notes', 'No notes provided') }}</p>
                             
-                            {% if update.phase_cost %}
+                            {% if update.get('phase_cost', 0) > 0 %}
                             <div class="cost-card mt-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span>Phase Cost:</span>
-                                    <span class="cost-value">₹{{ "{:,.2f}".format(update.phase_cost) }}</span>
+                                    <span class="cost-value">₹{{ "{:,.2f}".format(update.get('phase_cost', 0)) }}</span>
                                 </div>
-                                {% if update.cost_breakdown %}
-                                <small class="text-secondary d-block mt-2">{{ update.cost_breakdown }}</small>
+                                {% if update.get('cost_breakdown', '') %}
+                                <small class="text-secondary d-block mt-2">{{ update.get('cost_breakdown', '') }}</small>
                                 {% endif %}
                             </div>
                             {% endif %}
 
-                            {% if update.images %}
+                            {% if update.get('images', []) %}
                             <div class="image-gallery">
-                                {% for image in update.images %}
-                                <div class="gallery-item" onclick="showImageModal('{{ url_for('static', filename='uploads/' + image.filename) }}', '{{ update.phase }}', '{{ update.update_date.strftime('%B %d, %Y') }}')">
-                                    <img src="{{ url_for('static', filename='uploads/' + image.filename) }}"
+                                {% for image in update.get('images', []) %}
+                                <div class="gallery-item" onclick="showImageModal('{{ url_for('static', filename='uploads/' + image.get('filename', '')) }}', '{{ update.get('phase', '') }}', '{{ update.get('update_date').strftime('%B %d, %Y') if update.get('update_date') else 'N/A' }}')">
+                                    <img src="{{ url_for('static', filename='uploads/' + image.get('filename', '')) }}"
                                          class="gallery-image"
                                          alt="Progress Image">
                                     <div class="gallery-overlay">
-                                        <div>{{ update.phase|title }}</div>
-                                        <small>{{ update.update_date.strftime('%B %d, %Y') }}</small>
+                                        <div>{{ update.get('phase', '')|title }}</div>
+                                        <small>{{ update.get('update_date').strftime('%B %d, %Y') if update.get('update_date') else 'N/A' }}</small>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -529,17 +571,17 @@
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
-                                        <h2 class="mb-0">₹{{ "{:,.2f}".format(project.total_cost|default(0)) }}</h2>
+                                        <h2 class="mb-0">₹{{ "{:,.2f}".format(project.get('total_cost', 0)) }}</h2>
                                         <p class="text-secondary mb-0">Total Cost</p>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="progress mb-2">
                                             <div class="progress-bar" role="progressbar" 
-                                                 style="width: {{ (project.total_cost|default(0) / project.estimated_cost|default(1) * 100)|round }}%">
+                                                 style="width: {{ (project.get('total_cost', 0) / project.get('estimated_cost', 1) * 100)|round }}%">
                                             </div>
                                         </div>
                                         <small class="text-secondary">
-                                            of estimated ₹{{ "{:,.2f}".format(project.estimated_cost|default(0)) }}
+                                            of estimated ₹{{ "{:,.2f}".format(project.get('estimated_cost', 0)) }}
                                         </small>
                                     </div>
                                 </div>
@@ -549,9 +591,9 @@
 
                     <!-- Phase-wise Costs -->
                     {% set phases = {'planning': 0, 'foundation': 0, 'framing': 0, 'mechanical': 0, 'finishing': 0, 'other': 0} %}
-                    {% for update in project.status_updates %}
-                        {% if update.phase and update.phase_cost %}
-                            {% set _ = phases.update({update.phase: phases[update.phase] + update.phase_cost}) %}
+                    {% for update in project.get('status_updates', []) %}
+                        {% if update.get('phase', '') and update.get('phase_cost', 0) %}
+                            {% set _ = phases.update({update.get('phase', ''): phases[update.get('phase', '')] + update.get('phase_cost', 0)}) %}
                         {% endif %}
                     {% endfor %}
 
@@ -563,11 +605,11 @@
                                 <div class="cost-value mb-2">₹{{ "{:,.2f}".format(cost) }}</div>
                                 <div class="progress" style="height: 4px;">
                                     <div class="progress-bar" role="progressbar" 
-                                         style="width: {{ (cost / project.total_cost * 100)|round }}%">
+                                         style="width: {{ (cost / project.get('total_cost', 0) * 100)|round }}%">
                                     </div>
                                 </div>
                                 <small class="text-secondary">
-                                    {{ (cost / project.total_cost * 100)|round }}% of total
+                                    {{ (cost / project.get('total_cost', 0) * 100)|round }}% of total
                                 </small>
                             </div>
                         </div>
@@ -577,6 +619,7 @@
             </div>
         </div>
         {% endfor %}
+        {% endif %}
     </div>
 
     <!-- Image Modal -->

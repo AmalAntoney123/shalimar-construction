@@ -77,22 +77,31 @@ def add_project():
             # Create new client
             temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
             
+            # Create client_data first with consistent structure
             client_data = {
-                'email': request.form.get('client_email'),
-                'name': request.form.get('client_name'),
+                'client_name': request.form.get('client_name'),
+                'client_email': request.form.get('client_email'),
+                'client_phone': request.form.get('client_phone'),
+                'client_address': request.form.get('client_address')
+            }
+            
+            new_client = {
+                'email': client_data['client_email'],
+                'name': client_data['client_name'],
                 'password': bcrypt.hashpw(temp_password.encode('utf-8'), bcrypt.gensalt()),
                 'role': 'client',
-                'phone': request.form.get('client_phone'),
-                'address': request.form.get('client_address')
+                'phone': client_data['client_phone'],
+                'address': client_data['client_address']
             }
             
             # Check if client already exists
-            existing_client = mongo.db.users.find_one({'email': client_data['email']})
+            existing_client = mongo.db.users.find_one({'email': new_client['email']})
             if existing_client:
                 flash('A client with this email already exists', 'error')
                 return redirect(url_for('admin.manage_projects'))
                 
-            client_id = mongo.db.users.insert_one(client_data).inserted_id
+            client_id = mongo.db.users.insert_one(new_client).inserted_id
+            client_data['client_id'] = client_id
             flash(f'New client account created with temporary password: {temp_password}')
 
         # Create project
