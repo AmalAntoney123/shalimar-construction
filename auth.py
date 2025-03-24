@@ -37,12 +37,19 @@ def login():
     user = mongo.db.users.find_one({'email': email})
     
     if user:
-        # Check password using bcrypt
-        if bcrypt.checkpw(password.encode('utf-8'), user['password']):
+        # Make sure password is stored as bytes in the database
+        stored_password = user['password']
+        if isinstance(stored_password, str):
+            # If it's stored as a string, convert it to bytes
+            stored_password = stored_password.encode('utf-8')
+            
+        if bcrypt.checkpw(password.encode('utf-8'), stored_password):
             session['user_id'] = str(user['_id'])
             session['role'] = user['role']
             if user['role'] == 'admin':
                 return redirect(url_for('admin.admin_panel'))
+            elif user['role'] == 'client':
+                return redirect(url_for('auth.client_dashboard'))
             return redirect(url_for('home'))
     
     flash('Invalid email or password')
@@ -60,6 +67,16 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
+# Add new route for client dashboard
+@auth_bp.route('/client/dashboard')
+@login_required
+def client_dashboard():
+    # Get client's projects
+    client_id = ObjectId(session['user_id'])
+    client = mongo.db.users.find_one({'_id': client_id})
+    projects = list(mongo.db.projects.find({'client_email': client['email']}))
+    return render_template('client/dashboard.html', projects=projects, client=client)
+
 # Initialize the MongoDB instance
 def init_auth(app):
     mongo.init_app(app)
@@ -69,10 +86,16 @@ def create_admin_user():
     admin = {
         'email': 'admin@gmail.com',
         'password': bcrypt.hashpw('your_admin_password'.encode('utf-8'), bcrypt.gensalt()),
-        'role': 'admin'
+        'role': 'admin',
+        'name': 'Admin'
     }
     try:
-        mongo.db.users.insert_one(admin)
-        print("Admin user created successfully")
+        # Check if admin already exists
+        existing_admin = mongo.db.users.find_one({'email': admin['email']})
+        if not existing_admin:
+            mongo.db.users.insert_one(admin)
+            print("Admin user created successfully")
+        else:
+            print("Admin user already exists")
     except Exception as e:
         print(f"Error creating admin user: {e}")

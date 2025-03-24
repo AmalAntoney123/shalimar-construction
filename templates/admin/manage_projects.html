@@ -62,14 +62,11 @@
                                 <td>{{ project.get('location', 'N/A') }}</td>
                                 <td>{{ project.get('created_date', 'N/A') }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#viewProjectModal{{ project._id }}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProjectModal{{ project._id }}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+                                    <a href="{{ url_for('admin.project_details', project_id=project._id) }}" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-eye text-black"></i>
+                                    </a>
                                     <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ project._id }}">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash text-black"></i>
                                     </button>
                                 </td>
                             </tr>
