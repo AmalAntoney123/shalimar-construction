@@ -8,14 +8,271 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        /* Status Badge */
+        .status-pill {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            background: white !important;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary) !important;
+        }
+
+        .nav-link {
+            color: var(--secondary) !important;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        /* Quick Stats Cards */
+        .card i {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .card-text {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Table Styles */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            border-bottom: 2px solid var(--border);
+            color: var(--secondary);
+            font-weight: 500;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Outline Primary Button */
+        .btn-outline-primary {
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            background-color: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Small Buttons */
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Danger Button */
+        .btn-outline-danger {
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            background-color: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Light Button */
+        .btn-outline-light {
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background-color: transparent;
+        }
+
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--dark);
+            transform: translateY(-1px);
+        }
+
+        /* Info Button */
+        .btn-outline-info {
+            color: #0ea5e9;
+            border: 1px solid #0ea5e9;
+            background-color: transparent;
+        }
+
+        .btn-outline-info:hover {
+            background-color: #0ea5e9;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        /* Secondary Button */
+        .btn-secondary {
+            background-color: var(--secondary);
+            border: none;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
+        }
+
+        /* Button with Icon */
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Remove text-black class effects */
+        .text-black {
+            color: inherit !important;
+        }
+
+        /* Button Group */
+        .btn-group {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .btn-group .btn {
+            border-radius: 0;
+        }
+
+        .btn-group .btn:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .btn-group .btn:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .bg-primary {
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
+        }
+
+        .bg-secondary {
+            background-color: #f3f4f6 !important;
+            color: #374151 !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Admin Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('home') }}">
                 <img src="{{ url_for('static', filename='images/logo 3.jpg') }}" alt="Shalimar Builders Logo" height="30" class="d-inline-block align-text-top me-2">
-                Shalimar<span class="text-primary">Builders</span>
+                Shalimar<span style="color: var(--primary)">Builders</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -24,7 +281,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.manage_projects') }}">Projects</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.manage_users') }}">Users</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">View Site</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">View Site</a></li> -->
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
                 </ul>
             </div>
@@ -81,7 +338,7 @@
                         <thead>
                             <tr>
                                 <th>Project Name</th>
-                                <th>Status</th>
+                                <th>Phase</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -89,7 +346,14 @@
                             {% for project in projects[:5] %}
                             <tr>
                                 <td>{{ project.get('name', 'N/A') }}</td>
-                                <td><span class="badge bg-primary">{{ project.get('status', 'N/A') }}</span></td>
+                                <td>
+                                    {% set latest_update = project.status_updates|sort(attribute='update_date')|last if project.status_updates else None %}
+                                    {% if latest_update %}
+                                        <span class="badge bg-primary">{{ latest_update.phase|title }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">No Updates</span>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{{ url_for('admin.manage_projects') }}" class="btn btn-sm btn-outline-primary">View</a>
                                 </td>

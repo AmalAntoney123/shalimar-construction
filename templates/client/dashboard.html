@@ -3,186 +3,622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Dashboard - Shalimar Builders</title>
-    <!-- Bootstrap CSS -->
+    <title>Project Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        /* Status Badge */
+        .status-pill {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-completed { background-color: #dcfce7; color: #166534; }
+        .status-progress { background-color: #dbeafe; color: #1e40af; }
+        .status-hold { background-color: #fef3c7; color: #92400e; }
+        .status-not-started { background-color: #f3f4f6; color: #374151; }
+
+        /* Progress Bar */
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(45deg, var(--primary), #3b82f6);
+            border-radius: 4px;
+        }
+
+        /* Cost Cards */
+        .cost-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .cost-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Updated Image Gallery Styles */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        /* Modal Styles Update */
+        .modal-dialog {
+            max-width: 800px;
+            margin: 1.75rem auto;
+        }
+
+        .modal-content {
+            background-color: transparent;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 0;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .modal-image-container {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* 4:3 Aspect Ratio */
+            background-color: #f8fafc;
+        }
+
+        .modal-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0,0,0,0.7);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Navigation */
+        .nav-pills .nav-link {
+            color: var(--secondary);
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            margin-right: 0.5rem;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .summary-stat h3 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .summary-stat p {
+            margin: 0;
+            color: var(--secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn-outline-danger {
+            border-color: var(--danger);
+            color: var(--danger);
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--danger);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Updated Status Pills */
+        .status-planning { background-color: #dbeafe; color: #1e40af; }
+        .status-foundation { background-color: #dcfce7; color: #166534; }
+        .status-framing { background-color: #fef3c7; color: #92400e; }
+        .status-mechanical { background-color: #fae8ff; color: #86198f; }
+        .status-finishing { background-color: #ede9fe; color: #5b21b6; }
+        .status-other { background-color: #f3f4f6; color: #374151; }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Add this right after the <body> tag and before the container -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="{{ url_for('static', filename='images/logo 3.jpg') }}" alt="Shalimar Builders Logo" height="30" class="d-inline-block align-text-top me-2">
-                Shalimar<span class="text-primary">Builders</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="nav-link">Welcome, {{ client.name }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-                    </li>
-                </ul>
+            <a class="navbar-brand" href="#">Project Dashboard</a>
+            <div class="ms-auto">
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </a>
             </div>
         </div>
     </nav>
 
     <div class="container py-4">
-        <h1 class="mb-4">My Projects</h1>
+        <!-- Project Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">My Projects</h2>
+            <div class="nav nav-pills">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#overview">Overview</button>
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#timeline">Timeline</button>
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#costs">Costs</button>
+            </div>
+        </div>
 
-        {% if projects %}
-        <div class="row">
-            {% for project in projects %}
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ project.name }}</h5>
-                        <div class="mb-3">
-                            <span class="badge bg-primary">{{ project.status }}</span>
+        <!-- Update the Recent Projects table section -->
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Phase</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                <tr>
+                    <td>{{ project.get('name', 'N/A') }}</td>
+                    <td>
+                        {% set latest_update = project.status_updates|sort(attribute='update_date')|last %}
+                        <span class="status-pill status-{{ latest_update.phase|lower|replace(' ', '-') }}">
+                            {{ latest_update.phase|title }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.manage_projects') }}" class="btn btn-sm btn-outline-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% for project in projects %}
+        <!-- Project Summary Stats -->
+        <div class="summary-section mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h3>{{ project.name }}</h3>
+                    <p class="text-secondary mb-0">{{ project.location }}</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    {% set latest_update = project.status_updates|sort(attribute='update_date')|last %}
+                    <span class="status-pill status-{{ latest_update.phase|lower|replace(' ', '-') }}">
+                        {{ latest_update.phase|title }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview">
+                <div class="row g-4">
+                    <!-- Project Stats -->
+                    <div class="col-md-4">
+                        <div class="summary-stat">
+                            <h3>{{ "{:,.2f}".format(project.total_cost|default(0)) }}</h3>
+                            <p>Total Cost (₹)</p>
                         </div>
-                        <div class="progress mb-3" style="height: 25px;">
-                            {% set progress = {
-                                'Not Started': 0,
-                                'In Progress': 50,
-                                'On Hold': 75,
-                                'Completed': 100
-                            } %}
-                            {% set progress_color = {
-                                'Not Started': 'bg-secondary',
-                                'In Progress': 'bg-primary',
-                                'On Hold': 'bg-warning',
-                                'Completed': 'bg-success'
-                            } %}
-                            <div class="progress-bar {{ progress_color[project.get('status', 'Not Started')] }}"
-                                role="progressbar"
-                                aria-valuenow="{{ progress[project.get('status', 'Not Started')] }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100">
-                                {{ project.get('status', 'Not Started') }}
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-stat">
+                            <h3>{{ project.status_updates|length }}</h3>
+                            <p>Updates</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-stat">
+                            <h3>{{ project.created_date.strftime('%b %d, %Y') }}</h3>
+                            <p>Start Date</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Overall Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress-item">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Construction Progress</span>
+                                {% set latest_update = project.status_updates|sort(attribute='update_date')|last %}
+                                <span>{{ latest_update.completion_percentage|default(0)|round|int }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ latest_update.completion_percentage|default(0)|round|int }}%"
+                                     aria-valuenow="{{ latest_update.completion_percentage|default(0)|round|int }}"
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
                             </div>
                         </div>
-                        <dl class="row mb-0">
-                            <dt class="col-sm-4">Location:</dt>
-                            <dd class="col-sm-8">{{ project.location }}</dd>
-                            
-                            <dt class="col-sm-4">Start Date:</dt>
-                            <dd class="col-sm-8">{{ project.created_date.strftime('%B %d, %Y') if project.created_date else 'N/A' }}</dd>
-                            
-                            {% if project.description %}
-                            <dt class="col-sm-4">Description:</dt>
-                            <dd class="col-sm-8">{{ project.description }}</dd>
+
+                        <!-- Add Phase Progress -->
+                        {% set phases = ['planning', 'foundation', 'framing', 'mechanical', 'finishing'] %}
+                        {% set completed_phases = namespace(count=0) %}
+                        {% for phase in phases %}
+                            {% set phase_updates = project.status_updates|selectattr('phase', 'equalto', phase)|list %}
+                            {% if phase_updates and phase_updates|selectattr('status', 'equalto', 'Completed')|list %}
+                                {% set completed_phases.count = completed_phases.count + 1 %}
                             {% endif %}
-                        </dl>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" 
-                                data-bs-target="#projectDetails{{ loop.index }}">
-                            View Details
-                        </button>
-                    </div>
-                    <div class="collapse" id="projectDetails{{ loop.index }}">
-                        <div class="card-body border-top">
-                            <h6 class="mb-3">Project Timeline</h6>
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <div class="timeline-marker bg-success"></div>
-                                    <div class="timeline-content">
-                                        <h6 class="mb-0">Project Created</h6>
-                                        <small class="text-muted">
-                                            {{ project.created_date.strftime('%B %d, %Y') if project.created_date else 'N/A' }}
-                                        </small>
+                            <div class="progress-item mt-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small">{{ phase|title }}</span>
+                                    <span class="small">
+                                        {% if phase_updates and phase_updates|selectattr('status', 'equalto', 'Completed')|list %}
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        {% elif phase_updates %}
+                                            <i class="fas fa-clock text-warning"></i>
+                                        {% else %}
+                                            <i class="fas fa-circle text-secondary"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="progress" style="height: 4px;">
+                                    <div class="progress-bar {% if phase_updates and phase_updates|selectattr('status', 'equalto', 'Completed')|list %}bg-success{% elif phase_updates %}bg-warning{% else %}bg-secondary{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {{ '100' if phase_updates and phase_updates|selectattr('status', 'equalto', 'Completed')|list else '50' if phase_updates else '0' }}%">
                                     </div>
                                 </div>
-                                <!-- Add more timeline items based on project updates -->
                             </div>
+                        {% endfor %}
+                        
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">
+                                {{ completed_phases.count }} of {{ phases|length }} phases completed
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Images -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="image-gallery">
+                            {% for update in project.status_updates[-3:]|reverse %}
+                                {% if update.images %}
+                                    {% for image in update.images %}
+                                    <div class="gallery-item" onclick="showImageModal('{{ url_for('static', filename='uploads/' + image.filename) }}', '{{ update.phase }}', '{{ update.update_date.strftime('%B %d, %Y') }}')">
+                                        <img src="{{ url_for('static', filename='uploads/' + image.filename) }}"
+                                             class="gallery-image"
+                                             alt="Progress Image">
+                                        <div class="gallery-overlay">
+                                            <div>{{ update.phase|title }}</div>
+                                            <small>{{ update.update_date.strftime('%B %d, %Y') }}</small>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Timeline Tab -->
+            <div class="tab-pane fade" id="timeline">
+                <div class="timeline">
+                    {% for update in project.status_updates|sort(attribute='update_date', reverse=true) %}
+                    <div class="timeline-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="timeline-date">
+                                <i class="far fa-calendar-alt me-2"></i>
+                                {{ update.update_date.strftime('%B %d, %Y') }}
+                            </div>
+                            <span class="status-pill status-{{ update.status|lower|replace(' ', '-') }}">
+                                {{ update.phase|title }}
+                            </span>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <p>{{ update.notes if update.notes else 'No notes provided' }}</p>
+                            
+                            {% if update.phase_cost %}
+                            <div class="cost-card mt-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Phase Cost:</span>
+                                    <span class="cost-value">₹{{ "{:,.2f}".format(update.phase_cost) }}</span>
+                                </div>
+                                {% if update.cost_breakdown %}
+                                <small class="text-secondary d-block mt-2">{{ update.cost_breakdown }}</small>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            {% if update.images %}
+                            <div class="image-gallery">
+                                {% for image in update.images %}
+                                <div class="gallery-item" onclick="showImageModal('{{ url_for('static', filename='uploads/' + image.filename) }}', '{{ update.phase }}', '{{ update.update_date.strftime('%B %d, %Y') }}')">
+                                    <img src="{{ url_for('static', filename='uploads/' + image.filename) }}"
+                                         class="gallery-image"
+                                         alt="Progress Image">
+                                    <div class="gallery-overlay">
+                                        <div>{{ update.phase|title }}</div>
+                                        <small>{{ update.update_date.strftime('%B %d, %Y') }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Costs Tab -->
+            <div class="tab-pane fade" id="costs">
+                <div class="row g-4">
+                    <!-- Total Cost Card -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Cost Overview</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h2 class="mb-0">₹{{ "{:,.2f}".format(project.total_cost|default(0)) }}</h2>
+                                        <p class="text-secondary mb-0">Total Cost</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="progress mb-2">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 style="width: {{ (project.total_cost|default(0) / project.estimated_cost|default(1) * 100)|round }}%">
+                                            </div>
+                                        </div>
+                                        <small class="text-secondary">
+                                            of estimated ₹{{ "{:,.2f}".format(project.estimated_cost|default(0)) }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase-wise Costs -->
+                    {% set phases = {'planning': 0, 'foundation': 0, 'framing': 0, 'mechanical': 0, 'finishing': 0, 'other': 0} %}
+                    {% for update in project.status_updates %}
+                        {% if update.phase and update.phase_cost %}
+                            {% set _ = phases.update({update.phase: phases[update.phase] + update.phase_cost}) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for phase, cost in phases.items() %}
+                        {% if cost > 0 %}
+                        <div class="col-md-4">
+                            <div class="cost-card">
+                                <h6 class="text-secondary mb-2">{{ phase|title }}</h6>
+                                <div class="cost-value mb-2">₹{{ "{:,.2f}".format(cost) }}</div>
+                                <div class="progress" style="height: 4px;">
+                                    <div class="progress-bar" role="progressbar" 
+                                         style="width: {{ (cost / project.total_cost * 100)|round }}%">
+                                    </div>
+                                </div>
+                                <small class="text-secondary">
+                                    {{ (cost / project.total_cost * 100)|round }}% of total
+                                </small>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        {% else %}
-        <div class="alert alert-info">
-            No projects found. Please contact your project manager for more information.
-        </div>
-        {% endif %}
+        {% endfor %}
     </div>
 
-    <!-- Add some custom CSS for the timeline -->
-    <style>
-        /* Timeline styles */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            margin: 20px 0;
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-image-container">
+                        <img src="" class="modal-image" id="modalImage" alt="Progress Image">
+                    </div>
+                    <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="gallery-overlay">
+                        <h6 id="modalPhase" class="mb-1"></h6>
+                        <small id="modalDate"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showImageModal(src, phase, date) {
+            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            document.getElementById('modalImage').src = src;
+            document.getElementById('modalPhase').textContent = phase;
+            document.getElementById('modalDate').textContent = date;
+            modal.show();
         }
 
-        .timeline-item {
-            position: relative;
-            padding-bottom: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: -30px;
-            top: 0;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background-color: #198754;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -23px;
-            top: 15px;
-            bottom: 0;
-            width: 2px;
-            background-color: #dee2e6;
-        }
-
-        .timeline-item:last-child::before {
-            display: none;
-        }
-
-        .timeline-content {
-            padding-left: 15px;
-        }
-
-        /* Progress bar styles */
-        .progress {
-            background-color: #e9ecef;
-        }
-
-        .progress-bar {
-            transition: width 0.6s ease;
-        }
-
-        /* Card styles */
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-    </style>
-
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+        // Add image loading error handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.gallery-image');
+            images.forEach(img => {
+                img.onerror = function() {
+                    this.src = 'path/to/fallback-image.jpg'; // Add a fallback image
+                    this.alt = 'Image not available';
+                };
+            });
+        });
+    </script>
 </body>
 </html> 

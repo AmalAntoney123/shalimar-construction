@@ -12,15 +12,30 @@
 <body>
     <!-- Same navbar as dashboard -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <!-- ... existing navbar code ... -->
+        <div class="container">
+            <a class="navbar-brand" href="#">Shalimar Builders</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    
+                </ul>
+                <div class="d-flex">
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
     </nav>
 
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Manage Users</h1>
-            <button class="btn btn-primary text-black" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <!-- <button class="btn btn-primary text-black" data-bs-toggle="modal" data-bs-target="#addUserModal">
                 <i class="fas fa-plus"></i> Add New User
-            </button>
+            </button> -->
         </div>
 
         <!-- Flash Messages -->
