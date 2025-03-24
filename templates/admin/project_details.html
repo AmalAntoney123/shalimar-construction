@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - {{ project.name }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <!-- Include your navbar here -->
+    
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>{{ project.name }}</h1>
+            <div>
+                <a href="{{ url_for('admin.manage_projects') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Projects
+                </a>
+            </div>
+        </div>
+
+        <!-- Project Status Update -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Project Status</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin.update_project_status', project_id=project._id) }}" method="POST" class="d-flex align-items-center">
+                    <select class="form-select me-2" name="status" style="max-width: 200px;">
+                        <option value="Not Started" {% if project.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                        <option value="In Progress" {% if project.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="On Hold" {% if project.status == 'On Hold' %}selected{% endif %}>On Hold</option>
+                        <option value="Completed" {% if project.status == 'Completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Project Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Project Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Location</dt>
+                            <dd class="col-sm-8">{{ project.location }}</dd>
+                            
+                            <dt class="col-sm-4">Created Date</dt>
+                            <dd class="col-sm-8">{{ project.created_date.strftime('%Y-%m-%d') }}</dd>
+                            
+                            <dt class="col-sm-4">Description</dt>
+                            <dd class="col-sm-8">{{ project.description or 'No description provided' }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Client Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Name</dt>
+                            <dd class="col-sm-8">{{ project.client_name }}</dd>
+                            
+                            <dt class="col-sm-4">Email</dt>
+                            <dd class="col-sm-8">{{ project.client_email }}</dd>
+                            
+                            <dt class="col-sm-4">Phone</dt>
+                            <dd class="col-sm-8">{{ project.client_phone }}</dd>
+                            
+                            <dt class="col-sm-4">Address</dt>
+                            <dd class="col-sm-8">{{ project.client_address or 'No address provided' }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html> 

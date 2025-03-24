@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="{{ url_for('static', filename='images/service-5.png') }}" type="image/x-icon" />
+    <title>Shalimar Builders</title>
+
+    <!-- font awesome cdn link  -->
+     <!--Menu icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <!--pop up image-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css" />
+    <!--swipe to right and left-->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+
+    <!-- custom css file link  -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+   <!-- Header Section Starts -->
+<header class="header">
+  <div class="header-content">
+    <a href="#" class="logo">
+      <img src="{{ url_for('static', filename='images/logo 3.jpg') }}" alt="Shalimar Builders Logo" class="logo-img">
+      Shalimar<span>Builders</span>
+    </a>
+
+    <!-- Navigation Links -->
+    <!-- Navigation Links -->
+<nav class="navbar">
+  <a href="#home">Home</a>
+  <a href="#about">About</a>
+  <a href="#services">Services</a>
+  <a href="#projects">Gallery</a>
+  <!-- Change the href to go to emonitor.html -->
+  <a id="projectTrackingBtn" href="E-monitor.html">E-Monitor</a>
+  <a href="Cost-estimate.html">Cost Estimate</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+
+    <!-- Icons (Menu and Login) -->
+    <div class="icons">
+      <div id="menu-btn" class="fas fa-bars"></div>
+      <div id="login-btn" class="fas fa-user"></div>
+    </div>
+  </div>
+
+  <!-- Login Form -->
+  <div class="login-form-container">
+    <div id="close-login-btn" class="fas fa-times"></div>
+    
+    <form action="{{ url_for('auth.login') }}" method="POST">
+        <h3>Login</h3>
+        <input type="email" name="email" placeholder="Email" class="box" required>
+        <input type="password" name="password" placeholder="Password" class="box" required>
+        <input type="submit" value="Login" class="btn">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </form>
+  </div>
+</header>
+
+
+<!-- Contact Information Section -->
+<div class="contact-info">
+  <div id="close-contact-info" class="fas fa-times"></div>
+
+  <div class="info">
+    <i class="fas fa-phone"></i>
+    <h3>phone number</h3>
+    <p>+123-456-7890</p>
+    <p>+111-222-3333</p>
+  </div>
+
+  <div class="info">
+    <i class="fas fa-envelope"></i>
+    <h3>email address</h3>
+    <p>example@gmail.com</p>
+    <p>example2@gmail.com</p>
+  </div>
+
+  <div class="info">
+    <i class="fas fa-map-marker-alt"></i>
+    <h3>office address</h3>
+    <p>mumbai, india - 400104</p>
+  </div>
+
+  <div class="share">
+    <a href="#" class="fab fa-facebook-f"></a>
+    <a href="#" class="fab fa-twitter"></a>
+    <a href="#" class="fab fa-instagram"></a>
+    <a href="#" class="fab fa-linkedin"></a>
+  </div>
+</div>
+<!-- header section ends -->
+
+<!-- home section starts -->
+<section class="home" id="home">
+  <!-- Video Background -->
+  <div class="video-background">
+    <video autoplay muted loop id="bg-video">
+      <source src="static/images/855271-hd_1920_1080_25fps.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- Swiper Slider Content -->
+  <div class="swiper home-slider">
+    <div class="swiper-wrapper">
+      <section class="swiper-slide slide">
+        <div class="content">
+          <h3>Build Your Dream Home</h3>
+          <a href="#about" class="btn">Get Started</a>
+        </div>
+      </section>
+
+      <section class="swiper-slide slide">
+        <div class="content">
+          <h3>Making Dreams Come to Life</h3>
+          <p>
+            
+          </p>
+          <a href="#about" class="btn">Get Started</a>
+        </div>
+      </section>
+
+      <section class="swiper-slide slide">
+        <div class="content">
+          <h3>From Concept to Creation</h3>
+          <p>
+           
+          </p>
+          <a href="#about" class="btn">Get Started</a>
+        </div>
+      </section>
+    </div>
+
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+</section>
+<!-- home section ends -->
+
+
+   
+    <!-- about section starts  -->
+
+    <section class="about" id="about">
+      <h1 class="heading">about us</h1>
+
+      <div class="row">
+        <div class="video">
+          <video src="static/images/about-vid.mp4" loop muted autoplay></video>
+        </div>
+
+        <div class="content">
+          <h3>Building Dreams, One Brick at a Time!</h3>
+          <p>
+            At Shalimar Builders, we turn visions into reality. Specializing in detailed planning, precise cost estimation, and efficient permit management, we deliver quality construction that lasts. Our experienced team is dedicated to excellence and innovation, building not just structures, but lasting relationships with our clients.
+          </p>
+          <a href="#services" class="btn">read more</a>
+        </div>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <h3>10+</h3>
+          <p>years of experience</p>
+        </div>
+
+        <div class="box">
+          <h3>60+</h3>
+          <p>project completed</p>
+        </div>
+
+        <div class="box">
+          <h3>50+</h3>
+          <p>satiesfied clients</p>
+        </div>
+
+        <div class="box">
+          <h3>250+</h3>
+          <p>active workers</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- about section ends -->
+
+    <!-- services section starts  -->
+
+    <section class="services" id="services">
+      <h1 class="heading">our services</h1>
+
+      <div class="box-container">
+        <div class="box">
+          <img src="static/images/team-meeting.png" alt="" />
+          <h3>Project Planning</h3>
+          <p>
+            Expert planning services that include site analysis, feasibility studies, and scheduling to create a strong foundation for your project.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="static/images/stamp.png" alt="" />
+          <h3>Permit Assistance</h3>
+          <p>
+            Streamlined management of all regulatory paperwork, ensuring timely approval and compliance with local building codes.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="static/images/calculating.png" alt="" />
+          <h3>Cost Estimation</h3>
+          <p>
+            Accurate cost estimation for materials, labor, and resources, helping you plan and manage your budget effectively.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="static/images/apartment.png" alt="" />
+          <h3>Quality Construction</h3>
+          <p>
+            High-quality construction services that deliver robust and durable structures, built to the highest standards from foundation to finishing.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="static/images/interior-design.png" alt="" />
+          <h3>Interior Design</h3>
+          <p>
+            Innovative interior design solutions that transform spaces into functional, stylish, and comfortable environments.
+          </p>
+        </div>
+
+        <div class="box">
+          <img src="static/images/visual.png" alt="" />
+          <h3>3D Visualization</h3>
+          <p>
+            Advanced 3D modeling and visualization services that bring your project concepts to life, enhancing planning and client engagement.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- services section ends -->
+
+    <!-- projects section starts  -->
+
+    <section class="projects" id="projects">
+      <h1 class="heading">our projects</h1>
+
+      <div class="box-container">
+        <a href="static/images/pro -1.jpeg" class="box">
+          <div class="image">
+            <img src="static/images/pro -1.jpeg" alt="" />
+          </div>
+          <div class="content">
+            <div class="info">
+              <h3>dream home</h3>
+              <p>construction, design</p>
+            </div>
+            <i class="fas fa-plus"></i>
+          </div>
+        </a>
+
+        <a href="static/images/pro -2.jpeg" class="box">
+          <div class="image">
+            <img src="static/images/pro -2.jpeg" alt="" />
+          </div>
+          <div class="content">
+            <div class="info">
+              <h3>dream home</h3>
+              <p>construction, design</p>
+            </div>
+            <i class="fas fa-plus"></i>
+          </div>
+        </a>
+
+       
+
+       
+
+        <a href="static/images/pro-3.jpeg" class="box">
+          <div class="image">
+            <img src="static/images/pro-3.jpeg" alt="" />
+          </div>
+          <div class="content">
+            <div class="info">
+              <h3>dream home</h3>
+              <p>construction, design</p>
+            </div>
+            <i class="fas fa-plus"></i>
+          </div>
+        </a>
+
+       
+      </div>
+    </section>
+
+    <!-- projects section ends -->
+
+    
+
+    
+    <!-- contact section starts  -->
+
+    <section class="contact" id="contact">
+      <h1 class="heading">Contact Us</h1>
+    
+      <div class="row">
+        <!-- Google Map -->
+        <iframe
+          class="map"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3936.8858558396864!2d76.49819067367685!3d9.343367783991575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b062160035ee375%3A0xd3fe530cba9fefd8!2sNIRANAM!5e0!3m2!1sen!2sin!4v1739472352123!5m2!1sen!2sin"
+          allowfullscreen=""
+          loading="lazy"
+        ></iframe>
+    
+        <!-- Contact Form & Details -->
+        <div class="contact-container">
+          <!-- Contact Details -->
+          <div class="contact-details">
+            <h3>Our Office</h3>
+            <p><strong>Address:</strong> Shalimar Builders, Niranam, Kerala, India</p>
+            <p><strong>Phone:</strong> +91 98765 43210</p>
+            <p><strong>Email:</strong> info@shalimarbuilders.com</p>
+            <p><strong>Working Hours:</strong> Mon - Sat, 9:00 AM - 6:00 PM</p>
+          </div>
+    
+          <!-- Contact Form -->
+          <form action="">
+            <h3>Get in Touch</h3>
+            <input type="text" placeholder="Name" class="box" />
+            <input type="email" placeholder="Email" class="box" />
+            <input type="number" placeholder="Phone" class="box" />
+            <textarea placeholder="Message" class="box" cols="30" rows="10"></textarea>
+            <input type="submit" value="Send Message" class="btn" />
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- contact section ends -->
+
+    
+  
+
+    <!-- footer section starts  -->
+
+    <section class="footer">
+      <div class="links">
+        <a class="btn" href="#home">Home</a>
+        <a class="btn" href="#about">About</a>
+        <a class="btn" href="#services">Services</a>
+        <a class="btn" href="#projects">Gallery</a>
+        <!-- Change the href to go to emonitor.html -->
+        <a class="btn" id="projectTrackingBtn" href="E-monitor.html">E-Monitor</a>
+        <a class="btn" href="Cost-estimate.html">Cost Estimate</a>
+        <a class="btn" href="#contact">Contact</a>
+      </div>
+
+      <div class="credit">
+        created by
+        <a >
+          <span>BuildHub</span>
+        </a>
+        | all rights reserved!
+      </div>
+    </section>
+
+    <!-- footer section ends -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/js/lightgallery.min.js"></script>
+
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+
+    <!-- custom js file link  -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script>
+      lightGallery(document.querySelector(".projects .box-container"));
+    </script>
+  </body>
+</html>

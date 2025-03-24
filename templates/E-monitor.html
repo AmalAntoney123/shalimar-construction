@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Monitor | Shalimar Builders</title>
+    <link rel="stylesheet" href="css/styles1.css">
+</head>
+<body>
+
+   <!-- Header Section Starts -->
+<header class="header">
+  <div class="header-content">
+
+    <!-- Navbar Container (Logo + Links) -->
+    <nav class="navbar">
+
+      <!-- Logo -->
+      <a href="#" class="logo">
+        <img src="images/logo 3.jpg" alt="Shalimar Builders Logo" class="logo-img">
+        Shalimar<span>Builders</span>
+      </a>
+
+      <!-- Navigation Links -->
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#projects">Gallery</a>
+        <a id="projectTrackingBtn" href="E-monitor.html">E-Monitor</a>
+        <a href="Cost-estimate.html">Cost Estimate</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+
+    </nav>
+
+  </div>
+</header>
+
+    <!-- Icons (Menu and Search) -->
+    <div class="icons">
+      <div id="menu-btn" class="fas fa-bars"></div>
+      <div id="search-btn" class="fas fa-search"></div>
+    </div>
+  </div>
+
+    
+
+   <!-- Login Popup Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Client Login</h2>
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Enter your email">
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter your password">
+      <button id="loginBtn">Login</button>
+  </div>
+</div>
+
+
+    <!-- E-Monitor Page Content -->
+    <section id="projectDetails" class="hidden">
+        <h1 id="clientName"></h1>
+        <h2>Project ID: <span id="projectId"></span></h2>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <p>Project Completion:</p>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <p id="progressText">0% Complete</p>
+        </div>
+
+        <!-- Completed Work Gallery -->
+        <div class="gallery">
+            <h2>Completed Work</h2>
+            <div id="galleryImages"></div>
+        </div>
+    </section>
+
+    <script src="script2.js"></script>
+</body>
+</html>

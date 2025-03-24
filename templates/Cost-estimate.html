@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Cost Estimator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-content">
+            <a href="{{ url_for('home') }}" class="logo">
+                <img src="{{ url_for('static', filename='images/logo 3.jpg') }}" alt="Shalimar Builders Logo" class="logo-img">
+                Shalimar<span>Builders</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('home') }}#about">About</a>
+        <a href="{{ url_for('home') }}#services">Services</a>
+        <a href="{{ url_for('home') }}#projects">Gallery</a>
+        <a id="projectTrackingBtn" href="{{ url_for('e_monitor') }}">E-Monitor</a>
+        <a href="{{ url_for('cost_estimate') }}">Cost Estimate</a>
+        <a href="{{ url_for('home') }}#contact">Contact</a>
+    </nav>
+
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay loop muted>
+            <source src="{{ url_for('static', filename='images/coverr-carpenter-sawing-wood-6348-1080p.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Description Section -->
+    <section class="description">
+        <h1>Estimate Your Building Cost with Ease</h1>
+        <p>
+            Get an approximate cost estimation for your dream project. Simply enter the total area, 
+            number of floors, and construction type, and we will calculate an estimated cost based on standard industry rates.
+        </p>
+        <p>
+            This estimator provides a rough estimate and does not include additional costs such as permits, interior design, or landscaping. 
+            For a more detailed estimate, please contact our experts.
+        </p>
+    </section>
+
+    <!-- Home Section -->
+    <section class="home">
+        <div class="home-content">
+            <div class="form-container">
+                <h3>Estimate Your Building Cost</h3>
+                <form id="costForm">
+                    <label for="area">Total Area (sq. ft.):</label>
+                    <input type="number" id="area" required>
+
+                    <label for="floors">Number of Floors:</label>
+                    <input type="number" id="floors" required>
+
+                    <label for="constructionType">Type of Construction:</label>
+                    <select id="constructionType">
+                        <option value="standard">Standard</option>
+                        <option value="premium">Premium</option>
+                        <option value="luxury">Luxury</option>
+                    </select>
+
+                    <button type="button" class="btn" onclick="calculateCost()">Estimate Cost</button>
+                </form>
+
+                <h3>Estimated Cost: <span id="costOutput">₹0</span></h3>
+            </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/script1.js') }}" defer></script>
+</body>
+</html>
